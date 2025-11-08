@@ -11,8 +11,9 @@ public class CustomerService {
         // Test Cases
 
         // Test 1
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: The AddNewCustomer method shall enqueue a new customer into the queue.
+        // Expected Result: If the queue is full when trying to add a customer, then an error message will be displayed.
+
         Console.WriteLine("Test 1");
 
         // Defect(s) Found: 
@@ -20,15 +21,14 @@ public class CustomerService {
         Console.WriteLine("=================");
 
         // Test 2
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: The ServeCustomer function shall dequeue the next customer from the queue and display the details.
+        // Expected Result: If the queue is empty when trying to serve a customer, then an error message will be displayed.
         Console.WriteLine("Test 2");
 
         // Defect(s) Found: 
 
         Console.WriteLine("=================");
 
-        // Add more Test Cases As Needed Below
     }
 
     private readonly List<Customer> _queue = new();
