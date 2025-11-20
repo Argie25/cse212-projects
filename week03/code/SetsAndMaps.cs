@@ -21,8 +21,20 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var seen = new HashSet<string>();
+        var pairs = new List<string>();
+        foreach (var word in words)
+        {
+            string rev = $"{word[1]}{word[0]}";
+            if (seen.Contains(rev) && rev != word)
+            {
+                // To ensure consistent ordering and avoid duplicates, put the lexicographically smaller word first
+                string pair = string.Compare(word, rev) < 0 ? $"{word} & {rev}" : $"{rev} & {word}";
+                pairs.Add(pair);
+            }
+            seen.Add(word);
+        }
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -42,7 +54,13 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            if (fields.Length >= 4) // Education is in the 4th column (0-based index 3)
+            {
+                var degree = fields[3].Trim();
+                if (!degrees.ContainsKey(degree))
+                    degrees[degree] = 0;
+                degrees[degree]++;
+            }
         }
 
         return degrees;
@@ -66,8 +84,34 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Normalize: remove spaces and convert to lowercase
+        var normalizedA = new string(word1.Where(c => !char.IsWhiteSpace(c)).Select(c => char.ToLower(c)).ToArray());
+        var normalizedB = new string(word2.Where(c => !char.IsWhiteSpace(c)).Select(c => char.ToLower(c)).ToArray());
+        // If lengths differ, not anagrams
+        if (normalizedA.Length != normalizedB.Length) return false;
+        // Use dictionaries to count frequencies
+        var countA = new Dictionary<char, int>();
+        var countB = new Dictionary<char, int>();
+        for (int i = 0; i < normalizedA.Length; i++)
+        {
+            char c = normalizedA[i];
+            if (!countA.ContainsKey(c)) countA[c] = 0;
+            countA[c]++;
+        }
+        for (int i = 0; i < normalizedB.Length; i++)
+        {
+            char c = normalizedB[i];
+            if (!countB.ContainsKey(c)) countB[c] = 0;
+            countB[c]++;
+        }
+        // Compare dictionaries
+        if (countA.Count != countB.Count) return false;
+        foreach (var kvp in countA)
+        {
+            if (!countB.ContainsKey(kvp.Key) || countB[kvp.Key] != kvp.Value)
+                return false;
+        }
+        return true;
     }
 
     /// <summary>
@@ -85,6 +129,7 @@ public static class SetsAndMaps
     /// 
     /// </summary>
     public static string[] EarthquakeDailySummary()
+//     public static string[] EarthquakeDailySummary()
     {
         const string uri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
         using var client = new HttpClient();
